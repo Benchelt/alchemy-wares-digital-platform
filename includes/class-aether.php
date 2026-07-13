@@ -22,6 +22,13 @@ final class AW_Aether {
 	private static $instance = null;
 
 	/**
+	 * Logger service.
+	 *
+	 * @var AW_Aether_Logger
+	 */
+	private $logger;
+
+	/**
 	 * Return the shared engine instance.
 	 *
 	 * @return AW_Aether
@@ -53,12 +60,22 @@ final class AW_Aether {
 	/**
 	 * Boot the engine.
 	 *
-	 * Future Aether systems will attach themselves here.
-	 *
 	 * @return void
 	 */
 	public function boot() {
+		$this->logger = new AW_Aether_Logger();
+		$this->logger->info( 'Alchemy Aether Engine booted successfully.' );
+
 		do_action( 'aw_aether_loaded', $this );
+	}
+
+	/**
+	 * Return the logger service.
+	 *
+	 * @return AW_Aether_Logger
+	 */
+	public function logger() {
+		return $this->logger;
 	}
 
 	/**
