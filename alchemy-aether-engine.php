@@ -23,3 +23,9 @@ define( 'AW_AETHER_VERSION', '0.1.0' );
 define( 'AW_AETHER_FILE', __FILE__ );
 define( 'AW_AETHER_PATH', plugin_dir_path( __FILE__ ) );
 define( 'AW_AETHER_URL', plugin_dir_url( __FILE__ ) );
+
+// Load the core engine.
+require_once AW_AETHER_PATH . 'includes/class-aether.php';
+
+// Start the Alchemy Aether Engine.
+AW_Aether::instance();
