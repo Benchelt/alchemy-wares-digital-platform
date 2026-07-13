@@ -26,7 +26,20 @@ define( 'AW_AETHER_URL', plugin_dir_url( __FILE__ ) );
 
 // Load the core services.
 require_once AW_AETHER_PATH . 'includes/class-aether-logger.php';
+require_once AW_AETHER_PATH . 'includes/class-aether-activator.php';
+require_once AW_AETHER_PATH . 'includes/class-aether-deactivator.php';
 require_once AW_AETHER_PATH . 'includes/class-aether.php';
+
+// Register plugin lifecycle hooks.
+register_activation_hook(
+	AW_AETHER_FILE,
+	array( 'AW_Aether_Activator', 'activate' )
+);
+
+register_deactivation_hook(
+	AW_AETHER_FILE,
+	array( 'AW_Aether_Deactivator', 'deactivate' )
+);
 
 // Start the Alchemy Aether Engine.
 AW_Aether::instance();
