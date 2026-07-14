@@ -24,7 +24,7 @@ final class AW_Aether_Assets {
 	}
 
 	/**
-	 * Enqueue the browser runtime.
+	 * Enqueue the browser runtime and registered modules.
 	 *
 	 * @return void
 	 */
@@ -33,6 +33,14 @@ final class AW_Aether_Assets {
 			'aw-aether-runtime',
 			AW_AETHER_URL . 'assets/js/aether.js',
 			array(),
+			AW_AETHER_VERSION,
+			true
+		);
+
+		wp_enqueue_script(
+			'aw-aether-test-module',
+			AW_AETHER_URL . 'assets/js/modules/test-module.js',
+			array( 'aw-aether-runtime' ),
 			AW_AETHER_VERSION,
 			true
 		);
