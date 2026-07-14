@@ -24,9 +24,16 @@ final class AW_Aether {
 	/**
 	 * Logger service.
 	 *
-	 * @var AW_Aether_Logger
+	 * @var AW_Aether_Logger|null
 	 */
-	private $logger;
+	private $logger = null;
+
+	/**
+	 * Frontend asset loader.
+	 *
+	 * @var AW_Aether_Assets|null
+	 */
+	private $assets = null;
 
 	/**
 	 * Return the shared engine instance.
@@ -64,7 +71,13 @@ final class AW_Aether {
 	 */
 	public function boot() {
 		$this->logger = new AW_Aether_Logger();
-		$this->logger->info( 'Alchemy Aether Engine booted successfully.' );
+		$this->assets = new AW_Aether_Assets();
+
+		$this->assets->register();
+
+		$this->logger->info(
+			'Alchemy Aether Engine browser runtime registered successfully.'
+		);
 
 		do_action( 'aw_aether_loaded', $this );
 	}
@@ -72,10 +85,19 @@ final class AW_Aether {
 	/**
 	 * Return the logger service.
 	 *
-	 * @return AW_Aether_Logger
+	 * @return AW_Aether_Logger|null
 	 */
 	public function logger() {
 		return $this->logger;
+	}
+
+	/**
+	 * Return the asset loader.
+	 *
+	 * @return AW_Aether_Assets|null
+	 */
+	public function assets() {
+		return $this->assets;
 	}
 
 	/**
@@ -89,8 +111,12 @@ final class AW_Aether {
 	 * Prevent restoring the shared instance from serialized data.
 	 *
 	 * @return void
+	 *
+	 * @throws Exception When unserialization is attempted.
 	 */
 	public function __wakeup() {
-		throw new Exception( 'The Alchemy Aether Engine cannot be unserialized.' );
+		throw new Exception(
+			'The Alchemy Aether Engine cannot be unserialized.'
+		);
 	}
 }
