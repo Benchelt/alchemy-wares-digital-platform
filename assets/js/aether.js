@@ -8,7 +8,6 @@
 (function (window) {
 	'use strict';
 
-	// Prevent the runtime from loading more than once.
 	if (window.Aether) {
 		return;
 	}
@@ -23,10 +22,65 @@
 		debug: false,
 	};
 
+	const modules = new Map();
+
+	const Modules = {
+		register(module) {
+			if (!module || typeof module !== 'object') {
+				throw new TypeError(
+					'[Aether] A module must be an object.'
+				);
+			}
+
+			if (
+				typeof module.name !== 'string' ||
+				module.name.trim() === ''
+			) {
+				throw new TypeError(
+					'[Aether] A module must have a valid name.'
+				);
+			}
+
+			const name = module.name.trim();
+
+			if (modules.has(name)) {
+				throw new Error(
+					`[Aether] Module "${name}" is already registered.`
+				);
+			}
+
+			modules.set(name, module);
+
+			console.log(
+				`[Aether] Module "${name}" registered.`
+			);
+
+			return module;
+		},
+
+		get(name) {
+			return modules.get(name) || null;
+		},
+
+		has(name) {
+			return modules.has(name);
+		},
+
+		list() {
+			return Array.from(modules.keys());
+		},
+
+		count() {
+			return modules.size;
+		},
+	};
+
 	const Aether = {
 		version: '0.2.0',
 
 		config,
+
+		Modules,
 
 		start() {
 			if (state.started) {
@@ -98,7 +152,7 @@
 				version: this.version,
 				platform: this.config.platform,
 				runtime: runtimeState,
-				modules: 0,
+				modules: this.Modules.count(),
 				scenes: 0,
 				atmospheres: 0,
 			};
