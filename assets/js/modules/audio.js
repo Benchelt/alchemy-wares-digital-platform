@@ -25,11 +25,13 @@
 
         fadeDuration: 2000,
 
-        load() {
+        init() {
             player.src = '/wp-content/plugins/alchemy-aether-engine/assets/audio/om-so-hum108.mp3';
             player.preload = 'auto';
             player.loop = true;
             player.volume = 0;
+
+            console.log('[Aether Audio] Initialised.');
         },
 
         clearFade() {
@@ -153,8 +155,6 @@
         }
 
     };
-
-    AudioModule.load();
 
     window.Aether.Modules.register(AudioModule);
 

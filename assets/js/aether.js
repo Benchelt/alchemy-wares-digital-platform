@@ -30,6 +30,7 @@
         };
 
         const modules = new Map();
+        const initializedModules = new WeakSet();
 
         const Modules = {
                 register(module) {
@@ -57,6 +58,25 @@
                         }
 
                         modules.set(name, module);
+
+                        try {
+                                if (
+                                        typeof module.init === 'function' &&
+                                        !initializedModules.has(module)
+                                ) {
+                                        module.init();
+                                        initializedModules.add(module);
+                                }
+                        } catch (error) {
+                                modules.delete(name);
+
+                                console.error(
+                                        `[Aether] Module "${name}" failed to initialise.`,
+                                        error
+                                );
+
+                                throw error;
+                        }
 
                         console.log(
                                 `[Aether] Module "${name}" registered.`

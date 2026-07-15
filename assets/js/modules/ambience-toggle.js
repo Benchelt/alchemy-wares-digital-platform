@@ -159,8 +159,6 @@
 
     };
 
-    ToggleModule.init();
-
     window.Aether.Modules.register(ToggleModule);
 
 })(window, document);
