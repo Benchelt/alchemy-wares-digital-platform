@@ -6,10 +6,13 @@ All notable changes to the Alchemy Aether Engine will be documented here.
 
 ## v0.5.0 (In Development)
 
-### Planned
+### Added
 
 - Runtime lifecycle events
-- Module lifecycle
+- Runtime start event
+- Runtime stop event
+- Runtime pause event
+- Runtime resume event
 - Runtime diagnostics
 
 ---
