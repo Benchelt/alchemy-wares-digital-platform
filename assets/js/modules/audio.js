@@ -1,7 +1,7 @@
 /**
  * Aether Audio Module
  *
- * Version: 0.1.0
+ * Version: 0.2.0
  */
 
 (function (window) {
@@ -20,30 +20,42 @@
         started: false,
 
         load() {
-            player.src = '/wp-content/plugins/alchemy-aether-engine/assets/audio/om-so-hum.mp3';
+            player.src = '/wp-content/plugins/alchemy-aether-engine/assets/audio/om-so-hum108.mp3';
             player.preload = 'auto';
+            player.loop = true;
         },
 
         play() {
-            this.started = true;
-            console.log('[Aether Audio] play()');
+            player.play()
+                .then(() => {
+                    this.started = true;
+                    console.log('[Aether Audio] Playing.');
+                })
+                .catch((error) => {
+                    this.started = false;
+                    console.error('[Aether Audio] Playback failed:', error);
+                });
         },
 
         pause() {
+            player.pause();
             this.started = false;
-            console.log('[Aether Audio] pause()');
+
+            console.log('[Aether Audio] Paused.');
         },
 
         stop() {
-            this.started = false;
             player.pause();
             player.currentTime = 0;
+            this.started = false;
 
-            console.log('[Aether Audio] stop()');
+            console.log('[Aether Audio] Stopped.');
         },
 
         setVolume(volume) {
-            player.volume = volume;
+            const safeVolume = Math.min(1, Math.max(0, Number(volume)));
+
+            player.volume = safeVolume;
         },
 
         isPlaying() {
@@ -51,15 +63,12 @@
         },
 
         info() {
-
             return {
-
                 name: this.name,
-
-                playing: this.started
-
+                playing: this.started,
+                volume: player.volume,
+                source: player.src
             };
-
         }
 
     };
