@@ -24,23 +24,23 @@ final class AW_Aether_Assets {
 	}
 
 	/**
-	 * Enqueue the browser runtime, core services and modules.
+	 * Enqueue core services, the browser runtime and modules.
 	 *
 	 * @return void
 	 */
 	public function enqueue() {
 		wp_enqueue_script(
-			'aw-aether-runtime',
-			AW_AETHER_URL . 'assets/js/aether.js',
+			'aw-aether-events',
+			AW_AETHER_URL . 'assets/js/core/events.js',
 			array(),
 			AW_AETHER_VERSION,
 			true
 		);
 
 		wp_enqueue_script(
-			'aw-aether-events',
-			AW_AETHER_URL . 'assets/js/core/events.js',
-			array( 'aw-aether-runtime' ),
+			'aw-aether-runtime',
+			AW_AETHER_URL . 'assets/js/aether.js',
+			array( 'aw-aether-events' ),
 			AW_AETHER_VERSION,
 			true
 		);
@@ -48,7 +48,7 @@ final class AW_Aether_Assets {
 		wp_enqueue_script(
 			'aw-aether-test-module',
 			AW_AETHER_URL . 'assets/js/modules/test-module.js',
-			array( 'aw-aether-runtime', 'aw-aether-events' ),
+			array( 'aw-aether-runtime' ),
 			AW_AETHER_VERSION,
 			true
 		);

@@ -6,164 +6,199 @@
  */
 
 (function (window) {
-	'use strict';
+        'use strict';
 
-	if (window.Aether) {
-		return;
-	}
+        if (window.Aether) {
+                return;
+        }
 
-	const state = {
-		started: false,
-		paused: false,
-	};
+        if (!window.AetherEvents) {
+                console.error(
+                        '[Aether] Event Dispatcher is unavailable.'
+                );
+                return;
+        }
 
-	const config = {
-		platform: 'WordPress',
-		debug: false,
-	};
+        const state = {
+                started: false,
+                paused: false,
+        };
 
-	const modules = new Map();
+        const config = {
+                platform: 'WordPress',
+                debug: false,
+        };
 
-	const Modules = {
-		register(module) {
-			if (!module || typeof module !== 'object') {
-				throw new TypeError(
-					'[Aether] A module must be an object.'
-				);
-			}
+        const modules = new Map();
 
-			if (
-				typeof module.name !== 'string' ||
-				module.name.trim() === ''
-			) {
-				throw new TypeError(
-					'[Aether] A module must have a valid name.'
-				);
-			}
+        const Modules = {
+                register(module) {
+                        if (!module || typeof module !== 'object') {
+                                throw new TypeError(
+                                        '[Aether] A module must be an object.'
+                                );
+                        }
 
-			const name = module.name.trim();
+                        if (
+                                typeof module.name !== 'string' ||
+                                module.name.trim() === ''
+                        ) {
+                                throw new TypeError(
+                                        '[Aether] A module must have a valid name.'
+                                );
+                        }
 
-			if (modules.has(name)) {
-				throw new Error(
-					`[Aether] Module "${name}" is already registered.`
-				);
-			}
+                        const name = module.name.trim();
 
-			modules.set(name, module);
+                        if (modules.has(name)) {
+                                throw new Error(
+                                        `[Aether] Module "${name}" is already registered.`
+                                );
+                        }
 
-			console.log(
-				`[Aether] Module "${name}" registered.`
-			);
+                        modules.set(name, module);
 
-			return module;
-		},
+                        console.log(
+                                `[Aether] Module "${name}" registered.`
+                        );
 
-		get(name) {
-			return modules.get(name) || null;
-		},
+                        window.AetherEvents.emit('module:registered', {
+                                name,
+                                module,
+                        });
 
-		has(name) {
-			return modules.has(name);
-		},
+                        return module;
+                },
 
-		list() {
-			return Array.from(modules.keys());
-		},
+                get(name) {
+                        return modules.get(name) || null;
+                },
 
-		count() {
-			return modules.size;
-		},
-	};
+                has(name) {
+                        return modules.has(name);
+                },
 
-	const Aether = {
-		version: '0.2.0',
+                list() {
+                        return Array.from(modules.keys());
+                },
 
-		config,
+                count() {
+                        return modules.size;
+                },
+        };
 
-		Modules,
+        const Aether = {
+                version: '0.2.0',
 
-		start() {
-			if (state.started) {
-				console.log('[Aether] Runtime already running.');
-				return;
-			}
+                config,
 
-			state.started = true;
-			state.paused = false;
+                Events: window.AetherEvents,
 
-			console.log('[Aether] Runtime started.');
-		},
+                Modules,
 
-		stop() {
-			if (!state.started) {
-				return;
-			}
+                start() {
+                        if (state.started) {
+                                console.log('[Aether] Runtime already running.');
+                                return;
+                        }
 
-			state.started = false;
-			state.paused = false;
+                        state.started = true;
+                        state.paused = false;
 
-			console.log('[Aether] Runtime stopped.');
-		},
+                        console.log('[Aether] Runtime started.');
 
-		pause() {
-			if (!state.started || state.paused) {
-				return;
-			}
+                        this.Events.emit(
+                                'runtime:start',
+                                this.getState()
+                        );
+                },
 
-			state.paused = true;
+                stop() {
+                        if (!state.started) {
+                                return;
+                        }
 
-			console.log('[Aether] Runtime paused.');
-		},
+                        state.started = false;
+                        state.paused = false;
 
-		resume() {
-			if (!state.started || !state.paused) {
-				return;
-			}
+                        console.log('[Aether] Runtime stopped.');
 
-			state.paused = false;
+                        this.Events.emit(
+                                'runtime:stop',
+                                this.getState()
+                        );
+                },
 
-			console.log('[Aether] Runtime resumed.');
-		},
+                pause() {
+                        if (!state.started || state.paused) {
+                                return;
+                        }
 
-		isRunning() {
-			return state.started;
-		},
+                        state.paused = true;
 
-		isPaused() {
-			return state.paused;
-		},
+                        console.log('[Aether] Runtime paused.');
 
-		getState() {
-			return {
-				started: state.started,
-				paused: state.paused,
-			};
-		},
+                        this.Events.emit(
+                                'runtime:pause',
+                                this.getState()
+                        );
+                },
 
-		info() {
-			const runtimeState = state.started
-				? state.paused
-					? 'Paused'
-					: 'Running'
-				: 'Stopped';
+                resume() {
+                        if (!state.started || !state.paused) {
+                                return;
+                        }
 
-			const information = {
-				name: 'Aether Experience Engine',
-				version: this.version,
-				platform: this.config.platform,
-				runtime: runtimeState,
-				modules: this.Modules.count(),
-				scenes: 0,
-				atmospheres: 0,
-			};
+                        state.paused = false;
 
-			console.table(information);
+                        console.log('[Aether] Runtime resumed.');
 
-			return information;
-		},
-	};
+                        this.Events.emit(
+                                'runtime:resume',
+                                this.getState()
+                        );
+                },
 
-	window.Aether = Aether;
+                isRunning() {
+                        return state.started;
+                },
 
-	Aether.start();
+                isPaused() {
+                        return state.paused;
+                },
+
+                getState() {
+                        return {
+                                started: state.started,
+                                paused: state.paused,
+                        };
+                },
+
+                info() {
+                        const runtimeState = state.started
+                                ? state.paused
+                                        ? 'Paused'
+                                        : 'Running'
+                                : 'Stopped';
+
+                        const information = {
+                                name: 'Aether Experience Engine',
+                                version: this.version,
+                                platform: this.config.platform,
+                                runtime: runtimeState,
+                                modules: this.Modules.count(),
+                                eventListeners: this.Events.count(),
+                                scenes: 0,
+                                atmospheres: 0,
+                        };
+
+                        console.table(information);
+
+                        return information;
+                },
+        };
+
+        window.Aether = Aether;
+
+        Aether.start();
 })(window);
