@@ -76,5 +76,13 @@ final class AW_Aether_Assets {
 			$this->asset_version( 'assets/js/modules/audio.js' ),
 			true
 		);
+
+		wp_enqueue_script(
+			'aw-aether-ambience-toggle',
+			AW_AETHER_URL . 'assets/js/modules/ambience-toggle.js',
+			array( 'aw-aether-audio-module' ),
+			$this->asset_version( 'assets/js/modules/ambience-toggle.js' ),
+			true
+		);
 	}
 }
