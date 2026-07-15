@@ -23,6 +23,7 @@
 
         init() {
             this.render();
+            this.restorePreference();
             this.bindEvents();
             this.started = true;
 
@@ -67,6 +68,36 @@
             this.element.addEventListener('click', () => {
                 this.toggle();
             });
+
+            if (this.enabled) {
+                const resumeAudio = () => {
+                    const audio = window.Aether.Modules.get('audio');
+
+                    if (
+                        this.enabled &&
+                        audio &&
+                        !audio.isPlaying()
+                    ) {
+                        audio.play();
+                    }
+
+                    document.removeEventListener('click', resumeAudio);
+                    document.removeEventListener('keydown', resumeAudio);
+                    document.removeEventListener('touchstart', resumeAudio);
+                };
+
+                document.addEventListener('click', resumeAudio);
+                document.addEventListener('keydown', resumeAudio);
+                document.addEventListener('touchstart', resumeAudio);
+            }
+        },
+
+        restorePreference() {
+            const savedPreference = window.localStorage.getItem(
+                'aether.ambience'
+            );
+
+            this.setEnabled(savedPreference === 'on', false);
         },
 
         toggle() {
@@ -87,12 +118,19 @@
             this.setEnabled(true);
         },
 
-        setEnabled(enabled) {
+        setEnabled(enabled, savePreference = true) {
             if (!this.element) {
                 return;
             }
 
             this.enabled = Boolean(enabled);
+
+            if (savePreference) {
+                window.localStorage.setItem(
+                    'aether.ambience',
+                    this.enabled ? 'on' : 'off'
+                );
+            }
 
             const status = this.element.querySelector(
                 '.aether-ambience-status'
