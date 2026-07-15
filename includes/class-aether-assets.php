@@ -84,5 +84,12 @@ final class AW_Aether_Assets {
 			$this->asset_version( 'assets/js/modules/ambience-toggle.js' ),
 			true
 		);
+
+		wp_enqueue_style(
+			'aw-aether-ambience-toggle',
+			AW_AETHER_URL . 'assets/css/ambience-toggle.css',
+			array(),
+			$this->asset_version( 'assets/css/ambience-toggle.css' )
+		);
 	}
 }
