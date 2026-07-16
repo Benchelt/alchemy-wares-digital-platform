@@ -29,6 +29,51 @@
                 debug: false,
         };
 
+        const Config = {
+                get(key, fallback = null) {
+                        if (
+                                typeof key !== 'string' ||
+                                key.trim() === ''
+                        ) {
+                                return fallback;
+                        }
+
+                        const keys = key
+                                .trim()
+                                .split('.')
+                                .filter(Boolean);
+
+                        let value = config;
+
+                        for (const part of keys) {
+                                if (
+                                        value === null ||
+                                        typeof value !== 'object' ||
+                                        !Object.prototype.hasOwnProperty.call(
+                                                value,
+                                                part
+                                        )
+                                ) {
+                                        return fallback;
+                                }
+
+                                value = value[part];
+                        }
+
+                        return value;
+                },
+
+                has(key) {
+                        const missing = Symbol('missing');
+
+                        return this.get(key, missing) !== missing;
+                },
+
+                all() {
+                        return structuredClone(config);
+                },
+        };
+
         const modules = new Map();
         const initializedModules = new WeakSet();
         const services = new Map();
@@ -168,6 +213,8 @@
                 version: '0.7.0',
 
                 config,
+
+                Config,
 
                 Events: window.AetherEvents,
 
