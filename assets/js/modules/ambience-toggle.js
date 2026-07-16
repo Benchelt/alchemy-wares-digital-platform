@@ -1,7 +1,7 @@
 /**
  * Aether Ambience Toggle
  *
- * Version: 0.3.0
+ * Version: 0.4.0
  */
 
 (function (window, document) {
@@ -10,6 +10,8 @@
     if (!window.Aether) {
         return;
     }
+
+    const STORAGE_KEY = 'aether.ambience';
 
     const ToggleModule = {
 
@@ -20,6 +22,8 @@
         element: null,
 
         enabled: false,
+
+        resumeHandlersBound: false,
 
         init() {
             this.render();
@@ -45,7 +49,10 @@
             control.type = 'button';
             control.className = 'aether-ambience-control';
             control.setAttribute('aria-pressed', 'false');
-            control.setAttribute('aria-label', 'Ambient sound: Off');
+            control.setAttribute(
+                'aria-label',
+                'Ambient sound: Off'
+            );
 
             control.innerHTML = `
                 <span class="aether-ambience-label">Ambience</span>
@@ -69,56 +76,108 @@
                 this.toggle();
             });
 
+            window.Aether.Events.on('audio:error', () => {
+                if (!this.enabled) {
+                    return;
+                }
+
+                this.bindResumeHandlers();
+            });
+
             if (this.enabled) {
-                const resumeAudio = () => {
-                    const audio = window.Aether.Modules.get('audio');
-
-                    if (
-                        this.enabled &&
-                        audio &&
-                        !audio.isPlaying()
-                    ) {
-                        audio.play();
-                    }
-
-                    document.removeEventListener('click', resumeAudio);
-                    document.removeEventListener('keydown', resumeAudio);
-                    document.removeEventListener('touchstart', resumeAudio);
-                };
-
-                document.addEventListener('click', resumeAudio);
-                document.addEventListener('keydown', resumeAudio);
-                document.addEventListener('touchstart', resumeAudio);
+                this.bindResumeHandlers();
             }
+        },
+
+        bindResumeHandlers() {
+            if (this.resumeHandlersBound) {
+                return;
+            }
+
+            this.resumeHandlersBound = true;
+
+            const resumeAmbience = () => {
+                this.removeResumeHandlers(resumeAmbience);
+
+                if (this.enabled) {
+                    window.Aether.Events.emit(
+                        'ambience:on',
+                        {
+                            source: 'user-interaction',
+                            restored: true
+                        }
+                    );
+                }
+            };
+
+            document.addEventListener(
+                'click',
+                resumeAmbience,
+                { once: true }
+            );
+
+            document.addEventListener(
+                'keydown',
+                resumeAmbience,
+                { once: true }
+            );
+
+            document.addEventListener(
+                'touchstart',
+                resumeAmbience,
+                { once: true }
+            );
+        },
+
+        removeResumeHandlers(handler) {
+            document.removeEventListener(
+                'click',
+                handler
+            );
+
+            document.removeEventListener(
+                'keydown',
+                handler
+            );
+
+            document.removeEventListener(
+                'touchstart',
+                handler
+            );
+
+            this.resumeHandlersBound = false;
         },
 
         restorePreference() {
-            const savedPreference = window.localStorage.getItem(
-                'aether.ambience'
-            );
+            let savedPreference = null;
 
-            this.setEnabled(savedPreference === 'on', false);
+            try {
+                savedPreference = window.localStorage.getItem(
+                    STORAGE_KEY
+                );
+            } catch (error) {
+                console.warn(
+                    '[Aether UI] Could not read ambience preference.',
+                    error
+                );
+            }
+
+            this.setEnabled(
+                savedPreference === 'on',
+                false,
+                false
+            );
         },
 
         toggle() {
-            const audio = window.Aether.Modules.get('audio');
-
-            if (!audio) {
-                console.error('[Aether UI] Audio module unavailable.');
-                return;
-            }
-
-            if (this.enabled) {
-                audio.pause();
-                this.setEnabled(false);
-                return;
-            }
-
-            audio.play();
-            this.setEnabled(true);
+            this.setEnabled(!this.enabled);
         },
 
-        setEnabled(enabled, savePreference = true) {
+        setEnabled(
+            enabled,
+            savePreference = true,
+            emitEvent = true
+        ) {
             if (!this.element) {
                 return;
             }
@@ -126,21 +185,51 @@
             this.enabled = Boolean(enabled);
 
             if (savePreference) {
-                window.localStorage.setItem(
-                    'aether.ambience',
-                    this.enabled ? 'on' : 'off'
-                );
+                try {
+                    window.localStorage.setItem(
+                        STORAGE_KEY,
+                        this.enabled ? 'on' : 'off'
+                    );
+                } catch (error) {
+                    console.warn(
+                        '[Aether UI] Could not save ambience preference.',
+                        error
+                    );
+                }
             }
 
+            this.updateDisplay();
+
+            if (!emitEvent) {
+                return;
+            }
+
+            window.Aether.Events.emit(
+                this.enabled
+                    ? 'ambience:on'
+                    : 'ambience:off',
+                {
+                    enabled: this.enabled,
+                    source: 'ambience-toggle'
+                }
+            );
+        },
+
+        updateDisplay() {
             const status = this.element.querySelector(
                 '.aether-ambience-status'
             );
 
-            this.element.classList.toggle('is-active', this.enabled);
+            this.element.classList.toggle(
+                'is-active',
+                this.enabled
+            );
+
             this.element.setAttribute(
                 'aria-pressed',
                 String(this.enabled)
             );
+
             this.element.setAttribute(
                 'aria-label',
                 this.enabled
@@ -149,7 +238,8 @@
             );
 
             if (status) {
-                status.textContent = this.enabled ? 'On' : 'Off';
+                status.textContent =
+                    this.enabled ? 'On' : 'Off';
             }
         },
 

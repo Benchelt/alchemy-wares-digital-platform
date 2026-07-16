@@ -1,7 +1,7 @@
 /**
  * Aether Audio Module
  *
- * Version: 0.3.0
+ * Version: 0.4.0
  */
 
 (function (window) {
@@ -25,11 +25,25 @@
 
         fadeDuration: 2000,
 
+        subscriptions: [],
+
         init() {
             player.src = '/wp-content/plugins/alchemy-aether-engine/assets/audio/om-so-hum108.mp3';
             player.preload = 'auto';
             player.loop = true;
             player.volume = 0;
+
+            this.subscriptions.push(
+                window.Aether.Events.on('ambience:on', () => {
+                    this.play();
+                })
+            );
+
+            this.subscriptions.push(
+                window.Aether.Events.on('ambience:off', () => {
+                    this.pause();
+                })
+            );
 
             console.log('[Aether Audio] Initialised.');
         },
@@ -41,11 +55,20 @@
             }
         },
 
-        fadeTo(targetVolume, duration, onComplete) {
+        fadeTo(targetVolume, duration = this.fadeDuration, onComplete) {
             this.clearFade();
 
-            const safeTarget = Math.min(1, Math.max(0, Number(targetVolume)));
-            const safeDuration = Math.max(0, Number(duration));
+            const parsedTarget = Number(targetVolume);
+            const parsedDuration = Number(duration);
+
+            const safeTarget = Number.isFinite(parsedTarget)
+                ? Math.min(1, Math.max(0, parsedTarget))
+                : 0;
+
+            const safeDuration = Number.isFinite(parsedDuration)
+                ? Math.max(0, parsedDuration)
+                : this.fadeDuration;
+
             const startVolume = player.volume;
 
             if (safeDuration === 0 || startVolume === safeTarget) {
@@ -59,16 +82,26 @@
             }
 
             const interval = 50;
-            const steps = Math.max(1, Math.ceil(safeDuration / interval));
-            const volumeChange = (safeTarget - startVolume) / steps;
+            const steps = Math.max(
+                1,
+                Math.ceil(safeDuration / interval)
+            );
+
+            const volumeChange =
+                (safeTarget - startVolume) / steps;
 
             let currentStep = 0;
 
             fadeTimer = window.setInterval(() => {
                 currentStep += 1;
 
-                const nextVolume = startVolume + (volumeChange * currentStep);
-                player.volume = Math.min(1, Math.max(0, nextVolume));
+                const nextVolume =
+                    startVolume + (volumeChange * currentStep);
+
+                player.volume = Math.min(
+                    1,
+                    Math.max(0, nextVolume)
+                );
 
                 if (currentStep >= steps) {
                     this.clearFade();
@@ -84,36 +117,75 @@
         play() {
             this.clearFade();
 
+            if (!player.paused && this.started) {
+                this.fadeTo(this.targetVolume);
+                return Promise.resolve();
+            }
+
             player.volume = 0;
 
             return player.play()
                 .then(() => {
                     this.started = true;
 
-                    this.fadeTo(this.targetVolume, this.fadeDuration, () => {
-                        console.log('[Aether Audio] Fade-in complete.');
-                    });
+                    this.fadeTo(
+                        this.targetVolume,
+                        this.fadeDuration,
+                        () => {
+                            console.log(
+                                '[Aether Audio] Fade-in complete.'
+                            );
+                        }
+                    );
+
+                    window.Aether.Events.emit(
+                        'audio:play',
+                        this.info()
+                    );
 
                     console.log('[Aether Audio] Playing.');
                 })
                 .catch((error) => {
                     this.started = false;
-                    console.error('[Aether Audio] Playback failed:', error);
+
+                    window.Aether.Events.emit(
+                        'audio:error',
+                        {
+                            action: 'play',
+                            error
+                        }
+                    );
+
+                    console.error(
+                        '[Aether Audio] Playback failed:',
+                        error
+                    );
                 });
         },
 
         pause() {
             if (player.paused) {
+                this.clearFade();
+                player.volume = 0;
                 this.started = false;
                 return;
             }
 
-            this.fadeTo(0, this.fadeDuration, () => {
-                player.pause();
-                this.started = false;
+            this.fadeTo(
+                0,
+                this.fadeDuration,
+                () => {
+                    player.pause();
+                    this.started = false;
 
-                console.log('[Aether Audio] Paused.');
-            });
+                    window.Aether.Events.emit(
+                        'audio:pause',
+                        this.info()
+                    );
+
+                    console.log('[Aether Audio] Paused.');
+                }
+            );
 
             console.log('[Aether Audio] Fading out.');
         },
@@ -126,17 +198,43 @@
             player.volume = 0;
             this.started = false;
 
+            window.Aether.Events.emit(
+                'audio:stop',
+                this.info()
+            );
+
             console.log('[Aether Audio] Stopped.');
         },
 
         setVolume(volume) {
-            const safeVolume = Math.min(1, Math.max(0, Number(volume)));
+            const parsedVolume = Number(volume);
+
+            if (!Number.isFinite(parsedVolume)) {
+                throw new TypeError(
+                    '[Aether Audio] Volume must be a number.'
+                );
+            }
+
+            const safeVolume = Math.min(
+                1,
+                Math.max(0, parsedVolume)
+            );
 
             this.targetVolume = safeVolume;
 
             if (this.started && !player.paused) {
-                player.volume = safeVolume;
+                this.fadeTo(
+                    safeVolume,
+                    Math.min(400, this.fadeDuration)
+                );
             }
+
+            window.Aether.Events.emit(
+                'audio:volume',
+                {
+                    volume: safeVolume
+                }
+            );
         },
 
         isPlaying() {
