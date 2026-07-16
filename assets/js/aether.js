@@ -2,7 +2,7 @@
  * Aether Experience Engine
  * Browser Runtime
  *
- * Version: 0.2.0
+ * Version: 0.7.0
  */
 
 (function (window) {
@@ -31,6 +31,63 @@
 
         const modules = new Map();
         const initializedModules = new WeakSet();
+        const services = new Map();
+
+        const Services = {
+                register(name, service) {
+                        if (
+                                typeof name !== 'string' ||
+                                name.trim() === ''
+                        ) {
+                                throw new TypeError(
+                                        '[Aether] A service must have a valid name.'
+                                );
+                        }
+
+                        if (!service) {
+                                throw new TypeError(
+                                        '[Aether] A service must have a value.'
+                                );
+                        }
+
+                        const serviceName = name.trim();
+
+                        if (services.has(serviceName)) {
+                                throw new Error(
+                                        `[Aether] Service "${serviceName}" is already registered.`
+                                );
+                        }
+
+                        services.set(serviceName, service);
+
+                        console.log(
+                                `[Aether] Service "${serviceName}" registered.`
+                        );
+
+                        window.AetherEvents.emit('service:registered', {
+                                name: serviceName,
+                                service,
+                        });
+
+                        return service;
+                },
+
+                get(name) {
+                        return services.get(name) || null;
+                },
+
+                has(name) {
+                        return services.has(name);
+                },
+
+                list() {
+                        return Array.from(services.keys());
+                },
+
+                count() {
+                        return services.size;
+                },
+        };
 
         const Modules = {
                 register(module) {
@@ -108,13 +165,15 @@
         };
 
         const Aether = {
-                version: '0.2.0',
+                version: '0.7.0',
 
                 config,
 
                 Events: window.AetherEvents,
 
                 Modules,
+
+                Services,
 
                 start() {
                         if (state.started) {
@@ -207,6 +266,7 @@
                                 platform: this.config.platform,
                                 runtime: runtimeState,
                                 modules: this.Modules.count(),
+                                services: this.Services.count(),
                                 eventListeners: this.Events.count(),
                                 scenes: 0,
                                 atmospheres: 0,
