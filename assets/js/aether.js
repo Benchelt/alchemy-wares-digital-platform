@@ -76,63 +76,7 @@
 
         const modules = new Map();
         const initializedModules = new WeakSet();
-        const services = new Map();
-
-        const Services = {
-                register(name, service) {
-                        if (
-                                typeof name !== 'string' ||
-                                name.trim() === ''
-                        ) {
-                                throw new TypeError(
-                                        '[Aether] A service must have a valid name.'
-                                );
-                        }
-
-                        if (!service) {
-                                throw new TypeError(
-                                        '[Aether] A service must have a value.'
-                                );
-                        }
-
-                        const serviceName = name.trim();
-
-                        if (services.has(serviceName)) {
-                                throw new Error(
-                                        `[Aether] Service "${serviceName}" is already registered.`
-                                );
-                        }
-
-                        services.set(serviceName, service);
-
-                        console.log(
-                                `[Aether] Service "${serviceName}" registered.`
-                        );
-
-                        window.AetherEvents.emit('service:registered', {
-                                name: serviceName,
-                                service,
-                        });
-
-                        return service;
-                },
-
-                get(name) {
-                        return services.get(name) || null;
-                },
-
-                has(name) {
-                        return services.has(name);
-                },
-
-                list() {
-                        return Array.from(services.keys());
-                },
-
-                count() {
-                        return services.size;
-                },
-        };
+        const Services = window.AetherServices;
 
         const Modules = {
                 register(module) {

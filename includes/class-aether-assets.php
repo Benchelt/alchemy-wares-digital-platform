@@ -54,9 +54,20 @@ final class AW_Aether_Assets {
 		);
 
 		wp_enqueue_script(
+			'aw-aether-services',
+			AW_AETHER_URL . 'assets/js/core/services.js',
+			array( 'aw-aether-events' ),
+			$this->asset_version( 'assets/js/core/services.js' ),
+			true
+		);
+
+		wp_enqueue_script(
 			'aw-aether-runtime',
 			AW_AETHER_URL . 'assets/js/aether.js',
-			array( 'aw-aether-events' ),
+			array(
+				'aw-aether-events',
+				'aw-aether-services',
+			),
 			$this->asset_version( 'assets/js/aether.js' ),
 			true
 		);
