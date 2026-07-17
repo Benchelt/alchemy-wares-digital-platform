@@ -77,6 +77,7 @@
         const modules = new Map();
         const initializedModules = new WeakSet();
         const Services = window.AetherServices;
+        const Experience = window.AetherExperience;
 
         const Modules = {
                 register(module) {
@@ -165,6 +166,8 @@
                 Modules,
 
                 Services,
+
+                Experience,
 
                 start() {
                         if (state.started) {

@@ -61,15 +61,32 @@ final class AW_Aether_Assets {
 			true
 		);
 
+                wp_enqueue_script(
+                        'aw-aether-experience',
+                        AW_AETHER_URL . 'assets/js/core/experience.js',
+                        array( 'aw-aether-events' ),
+                        $this->asset_version( 'assets/js/core/experience.js' ),
+                        true
+                );
+
 		wp_enqueue_script(
 			'aw-aether-runtime',
 			AW_AETHER_URL . 'assets/js/aether.js',
 			array(
 				'aw-aether-events',
 				'aw-aether-services',
+                                'aw-aether-experience',
 			),
 			$this->asset_version( 'assets/js/aether.js' ),
 			true
+		);
+
+		wp_enqueue_script(
+		        'aw-aether-default-experiences',
+		        AW_AETHER_URL . 'assets/js/modules/default-experiences.js',
+		        array( 'aw-aether-runtime' ),
+		        $this->asset_version( 'assets/js/modules/default-experiences.js' ),
+		        true
 		);
 
 		wp_enqueue_script(
