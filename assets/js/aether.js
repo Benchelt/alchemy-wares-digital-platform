@@ -2,7 +2,7 @@
  * Aether Experience Engine
  * Browser Runtime
  *
- * Version: 0.7.0
+ * Version: 0.10.0
  */
 
 (function (window) {
@@ -78,6 +78,18 @@
         const initializedModules = new WeakSet();
         const Services = window.AetherServices;
         const Experience = window.AetherExperience;
+
+        const coreServices = {
+                events: window.AetherEvents,
+                experience: Experience,
+                config: Config,
+        };
+
+        Object.entries(coreServices).forEach(([name, service]) => {
+                if (!Services.has(name)) {
+                        Services.register(name, service);
+                }
+        });
 
         const Modules = {
                 register(module) {
@@ -155,7 +167,7 @@
         };
 
         const Aether = {
-                version: '0.7.0',
+                version: '0.10.0',
 
                 config,
 
@@ -244,6 +256,53 @@
                         return {
                                 started: state.started,
                                 paused: state.paused,
+                        };
+                },
+
+                modules() {
+                        return this.Modules.list();
+                },
+
+                services() {
+                        return this.Services.list();
+                },
+
+                events() {
+                        return this.Events.list();
+                },
+
+                experiences() {
+                        return this.Experience.list();
+                },
+
+                currentExperience() {
+                        return this.Experience.current();
+                },
+
+                health() {
+                        const runtimeState = this.getState();
+                        const activeExperience = this.currentExperience();
+
+                        return {
+                                healthy: Boolean(
+                                        this.Events &&
+                                        this.Modules &&
+                                        this.Services &&
+                                        this.Experience
+                                ),
+                                runtime: runtimeState.started
+                                        ? runtimeState.paused
+                                                ? 'Paused'
+                                                : 'Running'
+                                        : 'Stopped',
+                                modules: this.Modules.count(),
+                                services: this.Services.count(),
+                                eventListeners: this.Events.count(),
+                                eventTypes: this.Events.list().length,
+                                experiences: this.Experience.count(),
+                                activeExperience: activeExperience
+                                        ? activeExperience.name
+                                        : null,
                         };
                 },
 

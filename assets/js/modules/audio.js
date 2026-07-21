@@ -1,7 +1,7 @@
 /**
  * Aether Audio Module
  *
- * Version: 0.4.0
+ * Version: 0.9.0
  */
 
 (function (window) {
@@ -45,7 +45,69 @@
                 })
             );
 
+            this.subscriptions.push(
+                window.Aether.Events.on(
+                    'experience:loaded',
+                    (experience) => {
+                        if (
+                            !experience ||
+                            !experience.configuration
+                        ) {
+                            return;
+                        }
+
+                        this.applyExperience(
+                            experience.configuration
+                        );
+                    }
+                )
+            );
+
             console.log('[Aether Audio] Initialised.');
+        },
+
+        applyExperience(configuration) {
+            const audioConfiguration =
+                configuration &&
+                typeof configuration.audio === 'object'
+                    ? configuration.audio
+                    : null;
+
+            if (!audioConfiguration) {
+                console.log(
+                    '[Aether Audio] Experience has no audio configuration.'
+                );
+                return;
+            }
+
+            if (
+                Object.prototype.hasOwnProperty.call(
+                    audioConfiguration,
+                    'volume'
+                )
+            ) {
+                this.setVolume(audioConfiguration.volume);
+            }
+
+            if (audioConfiguration.enabled === false) {
+                this.pause();
+            }
+
+            window.Aether.Events.emit(
+                'audio:configured',
+                {
+                    enabled: audioConfiguration.enabled !== false,
+                    volume: this.targetVolume
+                }
+            );
+
+            console.log(
+                '[Aether Audio] Experience configuration applied.',
+                {
+                    enabled: audioConfiguration.enabled !== false,
+                    volume: this.targetVolume
+                }
+            );
         },
 
         clearFade() {
