@@ -26,7 +26,18 @@
 
             visual: {
                 enabled: true,
-                preset: 'temple'
+                preset: 'temple',
+
+                particles: {
+                    enabled: true,
+                    type: 'dust',
+                    count: 40,
+                    colour: '198, 167, 94',
+                    minSize: 0.7,
+                    maxSize: 2.4,
+                    minSpeed: 0.08,
+                    maxSpeed: 0.28
+                }
             }
         }
     );

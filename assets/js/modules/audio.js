@@ -28,7 +28,7 @@
         subscriptions: [],
 
         init() {
-            player.src = '/wp-content/plugins/alchemy-aether-engine/assets/audio/om-so-hum108.mp3';
+            player.src = '/wp-content/plugins/alchemy-aether-engine/assets/audio/om-so-hum-15min.mp3';
             player.preload = 'auto';
             player.loop = true;
             player.volume = 0;
