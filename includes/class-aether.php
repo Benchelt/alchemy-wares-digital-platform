@@ -35,6 +35,13 @@ final class AW_Aether {
 	 */
 	private $assets = null;
 
+        /**
+         * WordPress admin interface.
+         *
+         * @var AW_Aether_Admin|null
+         */
+        private $admin = null;
+
 	/**
 	 * Return the shared engine instance.
 	 *
@@ -72,8 +79,10 @@ final class AW_Aether {
 	public function boot() {
 		$this->logger = new AW_Aether_Logger();
 		$this->assets = new AW_Aether_Assets();
+                $this->admin  = new AW_Aether_Admin();
 
 		$this->assets->register();
+                $this->admin->register();
 
 		$this->logger->info(
 			'Alchemy Aether Engine browser runtime registered successfully.'
