@@ -2,7 +2,7 @@
  * Aether Experience Engine
  * Browser Runtime
  *
- * Version: 0.10.0
+ * Version: 0.11.0
  */
 
 (function (window) {
@@ -167,7 +167,7 @@
         };
 
         const Aether = {
-                version: '0.10.0',
+                version: '0.11.0',
 
                 config,
 
@@ -257,6 +257,33 @@
                                 started: state.started,
                                 paused: state.paused,
                         };
+                },
+
+                load(name, overrides = {}) {
+                        return this.Experience.load(name, overrides);
+                },
+
+                unload() {
+                        return this.Experience.unload();
+                },
+
+                reload() {
+                        const current = this.currentExperience();
+
+                        if (!current) {
+                                console.warn(
+                                        '[Aether] No active experience to reload.'
+                                );
+
+                                return null;
+                        }
+
+                        this.Experience.unload();
+
+                        return this.Experience.load(
+                                current.name,
+                                current.configuration
+                        );
                 },
 
                 modules() {
