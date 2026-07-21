@@ -106,11 +106,26 @@ final class AW_Aether_Assets {
 		);
 
 		wp_enqueue_script(
+			'aw-aether-visual-module',
+			AW_AETHER_URL . 'assets/js/modules/visual.js',
+			array( 'aw-aether-runtime' ),
+			$this->asset_version( 'assets/js/modules/visual.js' ),
+			true
+		);
+
+		wp_enqueue_script(
 			'aw-aether-ambience-toggle',
 			AW_AETHER_URL . 'assets/js/modules/ambience-toggle.js',
 			array( 'aw-aether-audio-module' ),
 			$this->asset_version( 'assets/js/modules/ambience-toggle.js' ),
 			true
+		);
+
+		wp_enqueue_style(
+			'aw-aether-visual',
+			AW_AETHER_URL . 'assets/css/visual.css',
+			array(),
+			$this->asset_version( 'assets/css/visual.css' )
 		);
 
 		wp_enqueue_style(

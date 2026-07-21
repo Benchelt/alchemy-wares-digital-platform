@@ -1,7 +1,7 @@
 /**
  * Aether Default Experiences
  *
- * Version: 0.9.0
+ * Version: 0.12.0
  */
 
 (function (window) {
@@ -22,6 +22,11 @@
             audio: {
                 enabled: true,
                 volume: 0.4
+            },
+
+            visual: {
+                enabled: true,
+                preset: 'temple'
             }
         }
     );
