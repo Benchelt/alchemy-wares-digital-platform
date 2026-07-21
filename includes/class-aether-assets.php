@@ -121,6 +121,19 @@ final class AW_Aether_Assets {
 			true
 		);
 
+		wp_enqueue_script(
+		        'aw-aether-boot',
+		        AW_AETHER_URL . 'assets/js/core/boot.js',
+		        array(
+		                'aw-aether-default-experiences',
+		                'aw-aether-audio-module',
+		                'aw-aether-visual-module',
+		                'aw-aether-ambience-toggle',
+		        ),
+		        $this->asset_version( 'assets/js/core/boot.js' ),
+		        true
+		);
+
 		wp_enqueue_style(
 			'aw-aether-visual',
 			AW_AETHER_URL . 'assets/css/visual.css',
