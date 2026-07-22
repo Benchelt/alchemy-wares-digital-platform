@@ -177,3 +177,386 @@
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 }
+
+
+/* ---------------------------------------------------------
+ * Aether application shell — Version 0.16.0
+ * --------------------------------------------------------- */
+
+.aw-aether-app-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 24px;
+	margin-bottom: 18px;
+	padding: 20px 24px;
+	border: 1px solid rgba(198, 167, 94, 0.18);
+	border-radius: 14px;
+	background: var(--aether-black);
+}
+
+.aw-aether-app-header h1 {
+	margin: 0;
+	color: var(--aether-ivory);
+	font-family: Georgia, serif;
+	font-size: 27px;
+	font-weight: 400;
+	line-height: 1;
+}
+
+.aw-aether-brand-row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.aw-aether-version {
+	padding: 4px 8px;
+	border: 1px solid rgba(198, 167, 94, 0.22);
+	border-radius: 20px;
+	color: var(--aether-gold);
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+}
+
+.aw-aether-engine-state {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	color: var(--aether-ivory);
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.aw-aether-engine-state > span {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: #70c79c;
+	box-shadow: 0 0 14px rgba(112, 199, 156, 0.75);
+}
+
+.aw-aether-navigation {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	margin-bottom: 18px;
+	padding: 6px;
+	border: 1px solid rgba(198, 167, 94, 0.16);
+	border-radius: 12px;
+	background: var(--aether-panel);
+}
+
+.aw-aether-navigation a {
+	padding: 11px 18px;
+	border-radius: 8px;
+	color: var(--aether-muted);
+	text-decoration: none;
+	font-size: 13px;
+	font-weight: 600;
+	transition:
+		background 160ms ease,
+		color 160ms ease;
+}
+
+.aw-aether-navigation a:hover,
+.aw-aether-navigation a:focus {
+	color: var(--aether-ivory);
+	background: rgba(255, 255, 255, 0.04);
+	outline: none;
+	box-shadow: none;
+}
+
+.aw-aether-navigation a.is-active {
+	color: var(--aether-black);
+	background: var(--aether-gold);
+}
+
+.aw-aether-view {
+	min-height: 500px;
+}
+
+.aw-aether-hero h2 {
+	margin: 0 0 14px;
+	color: var(--aether-ivory);
+	font-family: Georgia, serif;
+	font-size: 54px;
+	font-weight: 400;
+	line-height: 1;
+}
+
+.aw-aether-page-heading {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-end;
+	gap: 30px;
+	padding: 30px 4px 26px;
+}
+
+.aw-aether-page-heading h2 {
+	margin: 0 0 10px;
+	color: var(--aether-ivory);
+	font-family: Georgia, serif;
+	font-size: 38px;
+	font-weight: 400;
+	line-height: 1;
+}
+
+.aw-aether-page-heading > div > p:last-child {
+	max-width: 620px;
+	margin: 0;
+	color: var(--aether-muted);
+	font-size: 14px;
+	line-height: 1.7;
+}
+
+.aw-aether-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 40px;
+	padding: 0 17px;
+	border: 1px solid var(--aether-gold);
+	border-radius: 8px;
+	background: var(--aether-gold);
+	color: var(--aether-black);
+	font-size: 12px;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.aw-aether-button.is-disabled,
+.aw-aether-button:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+
+.aw-aether-experience-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 20px;
+}
+
+.aw-aether-experience-card {
+	overflow: hidden;
+	border: 1px solid rgba(198, 167, 94, 0.22);
+	border-radius: 16px;
+	background: var(--aether-panel);
+}
+
+.aw-aether-experience-preview {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 190px;
+	background:
+		radial-gradient(
+			circle at center,
+			rgba(198, 167, 94, 0.22),
+			transparent 35%
+		),
+		linear-gradient(145deg, #0d0b0e, #2b202c);
+}
+
+.aw-aether-orb {
+	width: 72px;
+	height: 72px;
+	border: 1px solid rgba(232, 221, 200, 0.38);
+	border-radius: 50%;
+	background:
+		radial-gradient(
+			circle at 38% 32%,
+			rgba(255, 246, 218, 0.8),
+			rgba(198, 167, 94, 0.3) 24%,
+			rgba(198, 167, 94, 0.08) 55%,
+			transparent 70%
+		);
+	box-shadow:
+		0 0 24px rgba(198, 167, 94, 0.38),
+		0 0 70px rgba(198, 167, 94, 0.15);
+}
+
+.aw-aether-active-badge {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	padding: 6px 9px;
+	border: 1px solid rgba(112, 199, 156, 0.24);
+	border-radius: 20px;
+	background: rgba(13, 11, 14, 0.72);
+	color: #94d8b6;
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.aw-aether-active-badge > span {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: #70c79c;
+}
+
+.aw-aether-experience-content {
+	padding: 24px;
+}
+
+.aw-aether-experience-title {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 20px;
+}
+
+.aw-aether-experience-title h3 {
+	margin: 0;
+	color: var(--aether-ivory);
+	font-family: Georgia, serif;
+	font-size: 30px;
+	font-weight: 400;
+}
+
+.aw-aether-experience-version {
+	color: rgba(198, 167, 94, 0.45);
+	font-family: Georgia, serif;
+	font-size: 28px;
+}
+
+.aw-aether-experience-description {
+	margin: 18px 0;
+	color: var(--aether-muted);
+	font-size: 13px;
+	line-height: 1.65;
+}
+
+.aw-aether-capabilities {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 7px;
+	margin-bottom: 20px;
+}
+
+.aw-aether-capabilities span {
+	padding: 5px 9px;
+	border: 1px solid rgba(198, 167, 94, 0.18);
+	border-radius: 20px;
+	color: var(--aether-gold);
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.07em;
+	text-transform: uppercase;
+}
+
+.aw-aether-experience-meta {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 8px;
+}
+
+.aw-aether-experience-meta div {
+	padding: 12px;
+	border: 1px solid rgba(232, 221, 200, 0.07);
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.018);
+}
+
+.aw-aether-experience-meta span,
+.aw-aether-experience-meta strong {
+	display: block;
+}
+
+.aw-aether-experience-meta span {
+	margin-bottom: 5px;
+	color: var(--aether-muted);
+	font-size: 10px;
+	text-transform: uppercase;
+}
+
+.aw-aether-experience-meta strong {
+	color: var(--aether-ivory);
+	font-size: 12px;
+}
+
+.aw-aether-card-actions {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 14px;
+	margin-top: 22px;
+	padding-top: 18px;
+	border-top: 1px solid rgba(232, 221, 200, 0.07);
+}
+
+.aw-aether-card-actions > span {
+	color: var(--aether-muted);
+	font-size: 11px;
+}
+
+.aw-aether-placeholder {
+	padding: 70px 30px;
+	border: 1px dashed rgba(198, 167, 94, 0.24);
+	border-radius: 14px;
+	background: var(--aether-panel);
+	text-align: center;
+}
+
+.aw-aether-placeholder .dashicons {
+	width: auto;
+	height: auto;
+	color: var(--aether-gold);
+	font-size: 42px;
+}
+
+.aw-aether-placeholder h3 {
+	margin: 14px 0 8px;
+	color: var(--aether-ivory);
+	font-family: Georgia, serif;
+	font-size: 26px;
+	font-weight: 400;
+}
+
+.aw-aether-placeholder p {
+	margin: 0;
+	color: var(--aether-muted);
+}
+
+@media (max-width: 1100px) {
+	.aw-aether-experience-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 782px) {
+	.aw-aether-app-header,
+	.aw-aether-page-heading {
+		display: block;
+	}
+
+	.aw-aether-engine-state,
+	.aw-aether-page-heading .aw-aether-button {
+		margin-top: 18px;
+	}
+
+	.aw-aether-navigation {
+		overflow-x: auto;
+	}
+
+	.aw-aether-navigation a {
+		white-space: nowrap;
+	}
+
+	.aw-aether-experience-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.aw-aether-hero h2 {
+		font-size: 40px;
+	}
+}

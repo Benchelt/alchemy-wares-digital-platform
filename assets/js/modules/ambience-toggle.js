@@ -1,7 +1,7 @@
 /**
  * Aether Ambience Toggle
  *
- * Version: 0.4.0
+ * Version: 0.5.0
  */
 
 (function (window, document) {
@@ -25,10 +25,15 @@
 
         resumeHandlersBound: false,
 
+        observer: null,
+
+        clickHandler: null,
+
         init() {
             this.render();
             this.restorePreference();
             this.bindEvents();
+            this.observeEmbeddedControl();
             this.started = true;
 
             console.log('[Aether UI] Ambience Toggle ready.');
@@ -47,7 +52,9 @@
             const control = document.createElement('button');
 
             control.type = 'button';
-            control.className = 'aether-ambience-control';
+            control.className =
+                'aether-ambience-control ' +
+                'aether-ambience-control--fallback';
             control.setAttribute('aria-pressed', 'false');
             control.setAttribute(
                 'aria-label',
@@ -72,9 +79,16 @@
                 return;
             }
 
-            this.element.addEventListener('click', () => {
-                this.toggle();
-            });
+            if (!this.clickHandler) {
+                this.clickHandler = () => {
+                    this.toggle();
+                };
+            }
+
+            this.element.addEventListener(
+                'click',
+                this.clickHandler
+            );
 
             window.Aether.Events.on('audio:error', () => {
                 if (!this.enabled) {
@@ -87,6 +101,86 @@
             if (this.enabled) {
                 this.bindResumeHandlers();
             }
+        },
+
+
+        observeEmbeddedControl() {
+            if (
+                this.element &&
+                this.element.classList.contains(
+                    'aether-ambience-control--embedded'
+                )
+            ) {
+                return;
+            }
+
+            if (!document.body || this.observer) {
+                return;
+            }
+
+            this.observer = new MutationObserver(() => {
+                const embeddedControl = document.querySelector(
+                    '.aether-ambience-control--embedded'
+                );
+
+                if (!embeddedControl) {
+                    return;
+                }
+
+                this.adoptControl(embeddedControl);
+            });
+
+            this.observer.observe(
+                document.body,
+                {
+                    childList: true,
+                    subtree: true
+                }
+            );
+        },
+
+        adoptControl(control) {
+            if (!control || control === this.element) {
+                return;
+            }
+
+            const previousControl = this.element;
+
+            if (previousControl && this.clickHandler) {
+                previousControl.removeEventListener(
+                    'click',
+                    this.clickHandler
+                );
+            }
+
+            this.element = control;
+
+            if (this.clickHandler) {
+                this.element.addEventListener(
+                    'click',
+                    this.clickHandler
+                );
+            }
+
+            this.updateDisplay();
+
+            if (
+                previousControl &&
+                previousControl.classList.contains(
+                    'aether-ambience-control--fallback'
+                )
+            ) {
+                previousControl.remove();
+            }
+
+            if (this.observer) {
+                this.observer.disconnect();
+                this.observer = null;
+            }
+
+            console.log(
+                '[Aether UI] Embedded ambience control adopted.'
+            );
         },
 
         bindResumeHandlers() {

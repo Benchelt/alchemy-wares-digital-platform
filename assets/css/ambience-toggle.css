@@ -94,3 +94,20 @@
 	color: #9fbea1;
 }
 
+
+
+/**
+ * Embedded controls are positioned by the WordPress layout.
+ * The dynamically generated fallback remains fixed.
+ */
+.aether-ambience-control--embedded {
+        position: static;
+        right: auto;
+        bottom: auto;
+        z-index: auto;
+        margin: 0;
+}
+
+.aether-ambience-control--embedded:hover {
+        transform: none;
+}

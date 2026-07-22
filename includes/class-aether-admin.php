@@ -9,7 +9,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Provides the Aether Engine application interface.
+ */
 final class AW_Aether_Admin {
+
+	/**
+	 * Supported application views.
+	 *
+	 * @var array
+	 */
+	private $views = array(
+		'dashboard',
+		'experiences',
+		'modules',
+		'settings',
+	);
 
 	/**
 	 * Register admin hooks.
@@ -32,14 +47,14 @@ final class AW_Aether_Admin {
 			'Aether Engine',
 			'manage_options',
 			'alchemy-aether-engine',
-			array( $this, 'render_dashboard' ),
+			array( $this, 'render_application' ),
 			'dashicons-superhero-alt',
 			58
 		);
 	}
 
 	/**
-	 * Load admin CSS only on the Aether page.
+	 * Load admin CSS only on the Aether application page.
 	 *
 	 * @param string $hook Current admin page hook.
 	 * @return void
@@ -53,8 +68,131 @@ final class AW_Aether_Admin {
 			'aw-aether-admin',
 			AW_AETHER_URL . 'assets/css/admin.css',
 			array(),
-			AW_AETHER_VERSION
+			filemtime( AW_AETHER_PATH . 'assets/css/admin.css' )
 		);
+	}
+
+	/**
+	 * Return the current application view.
+	 *
+	 * @return string
+	 */
+	private function current_view() {
+		$view = isset( $_GET['view'] )
+			? sanitize_key( wp_unslash( $_GET['view'] ) )
+			: 'dashboard';
+
+		if ( ! in_array( $view, $this->views, true ) ) {
+			return 'dashboard';
+		}
+
+		return $view;
+	}
+
+	/**
+	 * Create a URL for an application view.
+	 *
+	 * @param string $view View name.
+	 * @return string
+	 */
+	private function view_url( $view ) {
+		return add_query_arg(
+			array(
+				'page' => 'alchemy-aether-engine',
+				'view' => $view,
+			),
+			admin_url( 'admin.php' )
+		);
+	}
+
+	/**
+	 * Render the complete Aether application.
+	 *
+	 * @return void
+	 */
+	public function render_application() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$view = $this->current_view();
+		?>
+		<div class="wrap aw-aether-admin">
+			<header class="aw-aether-app-header">
+				<div>
+					<p class="aw-aether-label">
+						Environmental Experience Platform
+					</p>
+
+					<div class="aw-aether-brand-row">
+						<h1>Aether Engine</h1>
+
+						<span class="aw-aether-version">
+							v<?php echo esc_html( AW_AETHER_VERSION ); ?>
+						</span>
+					</div>
+				</div>
+
+				<div class="aw-aether-engine-state">
+					<span></span>
+					Engine Online
+				</div>
+			</header>
+
+			<?php $this->render_navigation( $view ); ?>
+
+			<main class="aw-aether-view">
+				<?php
+				switch ( $view ) {
+					case 'experiences':
+						$this->render_experiences();
+						break;
+
+					case 'modules':
+						$this->render_modules();
+						break;
+
+					case 'settings':
+						$this->render_settings();
+						break;
+
+					case 'dashboard':
+					default:
+						$this->render_dashboard();
+						break;
+				}
+				?>
+			</main>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render application navigation.
+	 *
+	 * @param string $current_view Current view.
+	 * @return void
+	 */
+	private function render_navigation( $current_view ) {
+		$navigation = array(
+			'dashboard'   => 'Dashboard',
+			'experiences' => 'Experiences',
+			'modules'     => 'Modules',
+			'settings'    => 'Settings',
+		);
+		?>
+		<nav class="aw-aether-navigation" aria-label="Aether Engine">
+			<?php foreach ( $navigation as $view => $label ) : ?>
+				<a
+					href="<?php echo esc_url( $this->view_url( $view ) ); ?>"
+					class="<?php echo $current_view === $view ? 'is-active' : ''; ?>"
+					<?php echo $current_view === $view ? 'aria-current="page"' : ''; ?>
+				>
+					<?php echo esc_html( $label ); ?>
+				</a>
+			<?php endforeach; ?>
+		</nav>
+		<?php
 	}
 
 	/**
@@ -62,87 +200,228 @@ final class AW_Aether_Admin {
 	 *
 	 * @return void
 	 */
-	public function render_dashboard() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
+	private function render_dashboard() {
 		?>
-		<div class="wrap aw-aether-admin">
-			<section class="aw-aether-hero">
+		<section class="aw-aether-hero">
+			<div>
+				<p class="aw-aether-label">System Overview</p>
+
+				<h2>Aether Experience Engine</h2>
+
+				<p class="aw-aether-intro">
+					Immersive audio, atmospheric visuals and configurable
+					experiences powered by one unified engine.
+				</p>
+			</div>
+
+			<div class="aw-aether-status">
+				<span></span>
+
 				<div>
-					<p class="aw-aether-label">
-						Environmental Experience Platform
-					</p>
+					<strong>Engine Online</strong>
+					<small>
+						Version <?php echo esc_html( AW_AETHER_VERSION ); ?>
+					</small>
+				</div>
+			</div>
+		</section>
 
-					<h1>Aether Experience Engine</h1>
+		<section class="aw-aether-stats">
+			<article>
+				<span>Runtime</span>
+				<strong>Ready</strong>
+			</article>
 
-					<p class="aw-aether-intro">
-						Immersive audio, atmospheric visuals and configurable
-						experiences powered by one unified engine.
-					</p>
+			<article>
+				<span>Modules</span>
+				<strong>5</strong>
+			</article>
+
+			<article>
+				<span>Experiences</span>
+				<strong>1</strong>
+			</article>
+
+			<article>
+				<span>Default</span>
+				<strong>Temple</strong>
+			</article>
+		</section>
+
+		<section class="aw-aether-panel">
+			<p class="aw-aether-label">Active Experience</p>
+			<h2>Temple</h2>
+
+			<div class="aw-aether-details">
+				<div>
+					<span>Ambience</span>
+					<strong>Enabled</strong>
 				</div>
 
-				<div class="aw-aether-status">
-					<span></span>
-
-					<div>
-						<strong>Engine Online</strong>
-						<small>
-							Version <?php echo esc_html( AW_AETHER_VERSION ); ?>
-						</small>
-					</div>
+				<div>
+					<span>Audio volume</span>
+					<strong>40%</strong>
 				</div>
-			</section>
 
-			<section class="aw-aether-stats">
-				<article>
-					<span>Runtime</span>
-					<strong>Ready</strong>
-				</article>
-
-				<article>
-					<span>Modules</span>
-					<strong>5</strong>
-				</article>
-
-				<article>
-					<span>Experiences</span>
-					<strong>1</strong>
-				</article>
-
-				<article>
-					<span>Default</span>
+				<div>
+					<span>Visual preset</span>
 					<strong>Temple</strong>
-				</article>
-			</section>
-
-			<section class="aw-aether-panel">
-				<p class="aw-aether-label">Active Experience</p>
-				<h2>Temple</h2>
-
-				<div class="aw-aether-details">
-					<div>
-						<span>Ambience</span>
-						<strong>Enabled</strong>
-					</div>
-
-					<div>
-						<span>Audio volume</span>
-						<strong>40%</strong>
-					</div>
-
-					<div>
-						<span>Visual preset</span>
-						<strong>Temple</strong>
-					</div>
-
-					<div>
-						<span>Particles</span>
-						<strong>40 gold dust</strong>
-					</div>
 				</div>
-			</section>
-		</div>
+
+				<div>
+					<span>Particles</span>
+					<strong>40 gold dust</strong>
+				</div>
+			</div>
+		</section>
+		<?php
+	}
+
+	/**
+	 * Render the Experiences workspace.
+	 *
+	 * @return void
+	 */
+	private function render_experiences() {
+		?>
+		<section class="aw-aether-page-heading">
+			<div>
+				<p class="aw-aether-label">Experience Library</p>
+				<h2>Experiences</h2>
+
+				<p>
+					Manage the atmospheric configurations available to the
+					Aether runtime.
+				</p>
+			</div>
+
+			<button class="aw-aether-button is-disabled" type="button" disabled>
+				<span aria-hidden="true">+</span>
+				New Experience
+			</button>
+		</section>
+
+		<section class="aw-aether-experience-grid">
+			<article class="aw-aether-experience-card">
+				<div class="aw-aether-experience-preview">
+					<div class="aw-aether-orb"></div>
+
+					<span class="aw-aether-active-badge">
+						<span></span>
+						Active
+					</span>
+				</div>
+
+				<div class="aw-aether-experience-content">
+					<div class="aw-aether-experience-title">
+						<div>
+							<p class="aw-aether-label">Default Experience</p>
+							<h3>Temple</h3>
+						</div>
+
+						<span class="aw-aether-experience-version">
+							01
+						</span>
+					</div>
+
+					<p class="aw-aether-experience-description">
+						A dark, meditative environment combining ambient audio,
+						warm gold particles and a ceremonial visual atmosphere.
+					</p>
+
+					<div class="aw-aether-capabilities">
+						<span>Audio</span>
+						<span>Visual</span>
+						<span>Particles</span>
+					</div>
+
+					<div class="aw-aether-experience-meta">
+						<div>
+							<span>Volume</span>
+							<strong>40%</strong>
+						</div>
+
+						<div>
+							<span>Particles</span>
+							<strong>40</strong>
+						</div>
+
+						<div>
+							<span>Preset</span>
+							<strong>Temple</strong>
+						</div>
+					</div>
+
+					<footer class="aw-aether-card-actions">
+						<button
+							class="aw-aether-button aw-aether-edit-button"
+							type="button"
+							disabled
+						>
+							Edit Experience
+						</button>
+
+						<span>Editor arriving next</span>
+					</footer>
+				</div>
+			</article>
+		</section>
+		<?php
+	}
+
+	/**
+	 * Render the Modules workspace.
+	 *
+	 * @return void
+	 */
+	private function render_modules() {
+		$this->render_placeholder(
+			'Runtime Components',
+			'Modules',
+			'Inspect and manage the services that power every Aether experience.'
+		);
+	}
+
+	/**
+	 * Render the Settings workspace.
+	 *
+	 * @return void
+	 */
+	private function render_settings() {
+		$this->render_placeholder(
+			'Engine Configuration',
+			'Settings',
+			'Global Aether Engine preferences will be managed from this workspace.'
+		);
+	}
+
+	/**
+	 * Render a placeholder workspace.
+	 *
+	 * @param string $label       Section label.
+	 * @param string $title       Page title.
+	 * @param string $description Page description.
+	 * @return void
+	 */
+	private function render_placeholder( $label, $title, $description ) {
+		?>
+		<section class="aw-aether-page-heading">
+			<div>
+				<p class="aw-aether-label">
+					<?php echo esc_html( $label ); ?>
+				</p>
+
+				<h2><?php echo esc_html( $title ); ?></h2>
+
+				<p><?php echo esc_html( $description ); ?></p>
+			</div>
+		</section>
+
+		<section class="aw-aether-placeholder">
+			<span class="dashicons dashicons-admin-generic"></span>
+			<h3><?php echo esc_html( $title ); ?> workspace</h3>
+			<p>This part of the application will be developed in a future sprint.</p>
+		</section>
 		<?php
 	}
 }

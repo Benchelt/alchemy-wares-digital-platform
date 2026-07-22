@@ -42,6 +42,13 @@ final class AW_Aether {
          */
         private $admin = null;
 
+        /**
+         * WordPress UI integration.
+         *
+         * @var AW_Aether_UI|null
+         */
+        private $ui = null;
+
 	/**
 	 * Return the shared engine instance.
 	 *
@@ -80,9 +87,11 @@ final class AW_Aether {
 		$this->logger = new AW_Aether_Logger();
 		$this->assets = new AW_Aether_Assets();
                 $this->admin  = new AW_Aether_Admin();
+                $this->ui     = new AW_Aether_UI();
 
 		$this->assets->register();
                 $this->admin->register();
+                $this->ui->register();
 
 		$this->logger->info(
 			'Alchemy Aether Engine browser runtime registered successfully.'
@@ -108,6 +117,16 @@ final class AW_Aether {
 	public function assets() {
 		return $this->assets;
 	}
+
+        /**
+         * Return the WordPress UI service.
+         *
+         * @return AW_Aether_UI|null
+         */
+        public function ui() {
+                return $this->ui;
+        }
+
 
 	/**
 	 * Prevent cloning the shared engine instance.
