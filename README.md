@@ -1,4 +1,4 @@
-# Alchemy Wares Digital Platform
+# Alchemy Wares Platform
 
 ## Overview
 
