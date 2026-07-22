@@ -31,6 +31,7 @@ final class AW_Aether_Settings {
 			'ui_enabled'        => true,
 			'default_experience'=> 'Temple',
 			'default_volume'    => 40,
+			'experience_overrides' => array(),
 		);
 	}
 
@@ -60,5 +61,19 @@ final class AW_Aether_Settings {
 		return array_key_exists( $key, $settings )
 			? $settings[ $key ]
 			: $fallback;
+	}
+
+	/**
+	 * Return stored experience overrides.
+	 *
+	 * @return array
+	 */
+	public static function experience_overrides() {
+
+		$overrides = self::get( 'experience_overrides', array() );
+
+		return is_array( $overrides )
+			? $overrides
+			: array();
 	}
 }
