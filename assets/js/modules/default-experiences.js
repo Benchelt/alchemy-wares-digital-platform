@@ -1,7 +1,7 @@
 /**
  * Aether Default Experiences
  *
- * Version: 0.12.0
+ * Version: 0.17.0
  */
 
 (function (window) {
@@ -14,36 +14,20 @@
         return;
     }
 
-    window.Aether.Experience.register(
-        'Temple',
-        {
-            ambience: true,
+    const definitions =
+        window.AetherExperienceDefinitions || {};
 
-            audio: {
-                enabled: true,
-                volume: 0.4
-            },
-
-            visual: {
-                enabled: true,
-                preset: 'temple',
-
-                particles: {
-                    enabled: true,
-                    type: 'dust',
-                    count: 40,
-                    colour: '198, 167, 94',
-                    minSize: 0.7,
-                    maxSize: 2.4,
-                    minSpeed: 0.08,
-                    maxSpeed: 0.28
-                }
-            }
+    Object.entries(definitions).forEach(
+        ([name, definition]) => {
+            window.Aether.Experience.register(
+                name,
+                definition
+            );
         }
     );
 
     console.log(
-        '[Aether] Default experiences registered.'
+        `[Aether] ${Object.keys(definitions).length} experiences registered.`
     );
 
 })(window);

@@ -89,6 +89,12 @@ final class AW_Aether_Assets {
 		        true
 		);
 
+                wp_localize_script(
+                        'aw-aether-default-experiences',
+                        'AetherExperienceDefinitions',
+                        AW_Aether::instance()->experiences()->all()
+                );
+
 		wp_enqueue_script(
 			'aw-aether-test-module',
 			AW_AETHER_URL . 'assets/js/modules/test-module.js',

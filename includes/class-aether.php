@@ -49,7 +49,14 @@ final class AW_Aether {
          */
         private $ui = null;
 
-	/**
+        /**
+         * Experience definition provider.
+         *
+         * @var AW_Aether_Experience_Provider|null
+         */
+        private $experience_provider = null;
+
+        /**
 	 * Return the shared engine instance.
 	 *
 	 * @return AW_Aether
@@ -84,10 +91,11 @@ final class AW_Aether {
 	 * @return void
 	 */
 	public function boot() {
-		$this->logger = new AW_Aether_Logger();
-		$this->assets = new AW_Aether_Assets();
-                $this->admin  = new AW_Aether_Admin();
-                $this->ui     = new AW_Aether_UI();
+                $this->logger              = new AW_Aether_Logger();
+                $this->assets              = new AW_Aether_Assets();
+                $this->admin               = new AW_Aether_Admin();
+                $this->ui                  = new AW_Aether_UI();
+                $this->experience_provider = new AW_Aether_Experience_Provider();
 
 		$this->assets->register();
                 $this->admin->register();
@@ -127,6 +135,14 @@ final class AW_Aether {
                 return $this->ui;
         }
 
+	/**
+	 * Return the experience provider.
+	 *
+	 * @return AW_Aether_Experience_Provider|null
+	 */
+	public function experiences() {
+	        return $this->experience_provider;
+	}
 
 	/**
 	 * Prevent cloning the shared engine instance.

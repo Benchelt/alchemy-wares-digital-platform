@@ -58,65 +58,71 @@ Modules
 
 # Current Version
 
-## v0.4.0
+## v0.17.0 — Experience Provider Architecture
 
 ### Completed
 
-- Bootstrap
-- Browser Runtime
-- Module Registry
+- Modular browser runtime
 - Event Dispatcher
-- First Runtime Module
-- GitHub integration
+- Module Registry
+- Services Registry
+- Configuration API
+- Experience Manager
+- Automatic experience loading
+- Audio and visual modules
+- Persistent ambience controls
+- WordPress admin application shell
+- WordPress UI integration
+- PHP Experience Provider
+- Server-provided experience definitions
 
 ---
 
 # Development Roadmap
 
-## v0.5
+## v0.18 — Experience Administration
 
-- Runtime lifecycle events
-- Module lifecycle
-- Improved diagnostics
+- Connect the Experiences admin view to the provider
+- Display available experiences
+- Display experience configuration and status
+- Establish the editing and persistence architecture
 
-## v0.6
+## v0.19 — Experience Persistence
 
-- Audio Module
-- Fade engine
-- Volume control
-- Audio API
+- Store custom experience definitions in WordPress
+- Validate saved experience configuration
+- Preserve built-in experience defaults
+- Support enable and disable controls
 
-## v0.7
+## v0.20 — Atmosphere Packs
 
-- Header audio toggle
-- User preferences
-- Local storage
+- Define the atmosphere pack format
+- Separate reusable assets from experience configuration
+- Support installable built-in and third-party packs
+- Establish extension hooks for commercial packs
 
-## v0.8
+## v0.21 — Visual Systems
 
-- Atmosphere Manager
-- Ambient sound packs
-- Theme loading
+- Expand visual presets
+- Add configurable particle systems
+- Introduce scene transitions
+- Improve visual lifecycle management
 
-## v0.9
+## v0.22 — Audio Systems
 
-- Scene Manager
-- Scene transitions
-- Dynamic loading
+- Add volume controls
+- Support multiple audio assets
+- Add fade and transition behaviour
+- Prepare audio configuration for atmosphere packs
 
-## v1.0
+## v1.0 — First Stable Public Release
 
-First stable public release
-
-Features
-
-- Modular runtime
-- Audio engine
-- Atmospheres
-- Themes
-- Effects
-- Documentation
+- Stable platform APIs
+- Complete administration workflow
+- Experience and atmosphere pack support
+- Developer documentation
 - Example integrations
+- Production-ready release process
 
 ---
 
