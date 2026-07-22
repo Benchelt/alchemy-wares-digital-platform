@@ -80,12 +80,13 @@ Modules
 
 # Development Roadmap
 
-## v0.18 — Experience Administration
+## v0.18.0 — Experience Administration ✅
 
-- Connect the Experiences admin view to the provider
-- Display available experiences
-- Display experience configuration and status
-- Establish the editing and persistence architecture
+- Connected the Experiences admin view to the PHP provider
+- Displayed all available experiences dynamically
+- Displayed experience configuration, capabilities and default status
+- Added a safe empty-library state
+- Reserved editing and persistence for the next development milestones
 
 ## v0.19 — Experience Persistence
 

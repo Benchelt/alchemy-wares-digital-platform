@@ -283,6 +283,14 @@ final class AW_Aether_Admin {
 	 * @return void
 	 */
 	private function render_experiences() {
+		$experiences = AW_Aether::instance()
+			->experiences()
+			->all();
+
+		$default_experience = AW_Aether_Settings::get(
+			'default_experience',
+			'Temple'
+		);
 		?>
 		<section class="aw-aether-page-heading">
 			<div>
@@ -301,71 +309,151 @@ final class AW_Aether_Admin {
 			</button>
 		</section>
 
-		<section class="aw-aether-experience-grid">
-			<article class="aw-aether-experience-card">
-				<div class="aw-aether-experience-preview">
-					<div class="aw-aether-orb"></div>
+		<?php if ( empty( $experiences ) ) : ?>
+			<section class="aw-aether-placeholder">
+				<p class="aw-aether-label">No Experiences Found</p>
+				<h3>Your experience library is empty.</h3>
 
-					<span class="aw-aether-active-badge">
-						<span></span>
-						Active
-					</span>
-				</div>
+				<p>
+					Register an experience through the PHP provider to display
+					it here.
+				</p>
+			</section>
+		<?php else : ?>
+			<section class="aw-aether-experience-grid">
+				<?php
+				$index = 0;
 
-				<div class="aw-aether-experience-content">
-					<div class="aw-aether-experience-title">
-						<div>
-							<p class="aw-aether-label">Default Experience</p>
-							<h3>Temple</h3>
+				foreach ( $experiences as $name => $experience ) :
+					$index++;
+
+					$audio = isset( $experience['audio'] )
+						&& is_array( $experience['audio'] )
+						? $experience['audio']
+						: array();
+
+					$visual = isset( $experience['visual'] )
+						&& is_array( $experience['visual'] )
+						? $experience['visual']
+						: array();
+
+					$particles = isset( $visual['particles'] )
+						&& is_array( $visual['particles'] )
+						? $visual['particles']
+						: array();
+
+					$audio_enabled     = ! empty( $audio['enabled'] );
+					$visual_enabled    = ! empty( $visual['enabled'] );
+					$particles_enabled = ! empty( $particles['enabled'] );
+
+					$volume = isset( $audio['volume'] )
+						? round( (float) $audio['volume'] * 100 )
+						: 0;
+
+					$particle_count = isset( $particles['count'] )
+						? absint( $particles['count'] )
+						: 0;
+
+					$preset = isset( $visual['preset'] )
+						? sanitize_text_field( $visual['preset'] )
+						: 'none';
+
+					$is_default = $name === $default_experience;
+					?>
+					<article class="aw-aether-experience-card">
+						<div class="aw-aether-experience-preview">
+							<div class="aw-aether-orb"></div>
+
+							<?php if ( $is_default ) : ?>
+								<span class="aw-aether-active-badge">
+									<span></span>
+									Default
+								</span>
+							<?php endif; ?>
 						</div>
 
-						<span class="aw-aether-experience-version">
-							01
-						</span>
-					</div>
+						<div class="aw-aether-experience-content">
+							<div class="aw-aether-experience-title">
+								<div>
+									<p class="aw-aether-label">
+										<?php
+										echo esc_html(
+											$is_default
+												? 'Default Experience'
+												: 'Available Experience'
+										);
+										?>
+									</p>
 
-					<p class="aw-aether-experience-description">
-						A dark, meditative environment combining ambient audio,
-						warm gold particles and a ceremonial visual atmosphere.
-					</p>
+									<h3><?php echo esc_html( $name ); ?></h3>
+								</div>
 
-					<div class="aw-aether-capabilities">
-						<span>Audio</span>
-						<span>Visual</span>
-						<span>Particles</span>
-					</div>
+								<span class="aw-aether-experience-version">
+									<?php
+									echo esc_html(
+										str_pad(
+											(string) $index,
+											2,
+											'0',
+											STR_PAD_LEFT
+										)
+									);
+									?>
+								</span>
+							</div>
 
-					<div class="aw-aether-experience-meta">
-						<div>
-							<span>Volume</span>
-							<strong>40%</strong>
+							<p class="aw-aether-experience-description">
+								Atmospheric configuration supplied by the
+								Aether Experience Provider.
+							</p>
+
+							<div class="aw-aether-capabilities">
+								<?php if ( $audio_enabled ) : ?>
+									<span>Audio</span>
+								<?php endif; ?>
+
+								<?php if ( $visual_enabled ) : ?>
+									<span>Visual</span>
+								<?php endif; ?>
+
+								<?php if ( $particles_enabled ) : ?>
+									<span>Particles</span>
+								<?php endif; ?>
+							</div>
+
+							<div class="aw-aether-experience-meta">
+								<div>
+									<span>Volume</span>
+									<strong><?php echo esc_html( $volume ); ?>%</strong>
+								</div>
+
+								<div>
+									<span>Particles</span>
+									<strong><?php echo esc_html( $particle_count ); ?></strong>
+								</div>
+
+								<div>
+									<span>Preset</span>
+									<strong><?php echo esc_html( ucfirst( $preset ) ); ?></strong>
+								</div>
+							</div>
+
+							<footer class="aw-aether-card-actions">
+								<button
+									class="aw-aether-button aw-aether-edit-button"
+									type="button"
+									disabled
+								>
+									Edit Experience
+								</button>
+
+								<span>Editor arriving next</span>
+							</footer>
 						</div>
-
-						<div>
-							<span>Particles</span>
-							<strong>40</strong>
-						</div>
-
-						<div>
-							<span>Preset</span>
-							<strong>Temple</strong>
-						</div>
-					</div>
-
-					<footer class="aw-aether-card-actions">
-						<button
-							class="aw-aether-button aw-aether-edit-button"
-							type="button"
-							disabled
-						>
-							Edit Experience
-						</button>
-
-						<span>Editor arriving next</span>
-					</footer>
-				</div>
-			</article>
-		</section>
+					</article>
+				<?php endforeach; ?>
+			</section>
+		<?php endif; ?>
 		<?php
 	}
 

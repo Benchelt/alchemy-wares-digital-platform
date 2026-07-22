@@ -4,6 +4,31 @@ All notable changes to the Alchemy Aether Engine will be documented here.
 
 ---
 
+## v0.18.0
+
+### Added
+
+- Dynamic Experience Library in the Aether administration interface
+- Automatic experience cards generated from PHP provider definitions
+- Empty-library state for installations without registered experiences
+- Default experience identification and status badge
+
+### Changed
+
+- Replaced the hard-coded Temple experience card with provider-driven rendering
+- Experience capabilities now reflect the supplied audio, visual and particle configuration
+- Experience metadata now displays configured volume, particle count and visual preset
+
+### Verified
+
+- PHP syntax check passes for the administration controller
+- Temple is loaded from the PHP Experience Provider
+- The configured default experience is identified correctly
+- Audio, visual and particle details render correctly in the Experience Library
+- Dashboard, Experiences, Modules and Settings administration views remain operational
+
+---
+
 ## v0.17.0
 
 ### Added
